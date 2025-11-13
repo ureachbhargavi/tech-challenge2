@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flask-hello-world
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/ureachbhargavi/tech-challenge2.git
+    targetRevision: gitops   # this is the branch Argo CD will watch
+    path: helm-chart         # where the Helm chart lives
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
