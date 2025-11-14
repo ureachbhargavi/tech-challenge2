@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: 759912403559.dkr.ecr.us-east-1.amazonaws.com/flask-hello-world
-  tag: 20251113210401
+  tag: latest
   pullPolicy: Always
 
 service:
