@@ -9,6 +9,7 @@ env:
   ECR_REPOSITORY: flask-hello-world
   GITOPS_BRANCH: gitops
   HELM_PATH: helm-chart
+  IMAGE_TAG=$(date +%Y%m%d%H%M%S)
 
 jobs:
   build-and-deploy:
@@ -32,11 +33,14 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Set IMAGE_TAG (timestamp)
+        id: vars
+        run: echo "IMAGE_TAG=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+
       - name: Build, tag, and push Docker image to ECR
         id: build-image
         run: |
-          IMAGE_TAG=$(date +%Y%m%d%H%M%S)
-          IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${IMAGE_TAG}
+          IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
 
           docker build -t $IMAGE_URI .
@@ -51,7 +55,7 @@ jobs:
           git checkout ${{ env.GITOPS_BRANCH }}
 
           sed -i "s|repository: .*|repository: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}|" ${{ env.HELM_PATH }}/values.yaml
-          sed -i "s|tag: .*|tag: $(date +%Y%m%d%H%M%S)|" ${{ env.HELM_PATH }}/values.yaml
+          sed -i "s|tag: .*|tag: ${{ env.IMAGE_TAG }}|" ${{ env.HELM_PATH }}/values.yaml
 
           git add ${{ env.HELM_PATH }}/values.yaml
           git commit -m "Update image tag to $(date +%Y%m%d%H%M%S)"
