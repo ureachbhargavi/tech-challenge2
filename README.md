@@ -1,5 +1,4 @@
-# tech-challenge2 - Application Deployment: Containerization, IaC, K8s & CI/CD
-A complete CI/CD pipeline using Docker, Terraform, GitHub Actions (CI), and Argo CD (CD) to deploy a simple “Hello, World!” application on AWS EKS using Helm charts.
+**Application Deployment: Containerization, IaC, K8s & CI/CD** - A complete CI/CD pipeline using Docker, Terraform, GitHub Actions (CI), and Argo CD (CD) to deploy a simple “Hello, World!” application on AWS EKS using Helm charts.
 
 **Prerequisites - Tools**
 AWS CLI
@@ -44,13 +43,14 @@ Deploy the Dockerized app to EKS.
 5. **CI/CD with GitOps (Automation Layer)**
 we are using a modern GitOps flow:
 
-**CI (Continuous Integration) — GitHub Actions**
+ a) **CI (Continuous Integration) — GitHub Actions**
 When code is pushed to the gitops branch:
 Build Docker image from Dockerfile.
 Tag it (e.g., v1.0, latest).
 Push image to AWS ECR.
 Update HELM values or manifest image tag automatically.
-**CD (Continuous Deployment) — Argo CD**
+
+ b) **CD (Continuous Deployment) — Argo CD**
 Argo CD watches your GitOps repo (manifests/HELM charts).
 When it detects a change (e.g., new image tag in HELM values.yaml),
 it automatically:
@@ -61,6 +61,7 @@ This makes your Kubernetes cluster always reflect Git state (core GitOps princip
 
 **Repository Structure**
 This repo uses a two-branch GitOps model:
+
 **main branch** - Contains everything related to the app:
 
 /app             → Application code (Flask / Node)
@@ -82,7 +83,7 @@ GitHub Actions updates image tags here
 1. **Clone the repository**
 git clone https://github.com/ureachbhargavi/tech-challenge2.git
 
-2.**cd tech-challenge2**
+2. **cd tech-challenge2**
 
 3. **Check out the correct branch**
 For infrastructure, app code:
@@ -101,21 +102,21 @@ Access your application using your host machine IP Address:Application port
 **Terraform Infrastructure**
 Terraform provisions your full AWS infrastructure:
 
-1.VPC module – Creates VPC, subnets (public/private), route tables, NAT gateways etc
+1. VPC module – Creates VPC, subnets (public/private), route tables, NAT gateways etc
 
-2.EKS module – Provisions EKS control plane, worker node group(s)
+2. EKS module – Provisions EKS control plane, worker node group(s)
 
-3.Worker node group configured with instance_type = t3.small
+3. Worker node group configured with instance_type = t3.small
 
-4.Auto-scaling group of nodes: minimum 1, maximum 4
+4. Auto-scaling group of nodes: minimum 1, maximum 4
 
-5.IAM roles and policies – Defines roles for EKS, node-group, service accounts, ECR push/pull permissions
+5. IAM roles and policies – Defines roles for EKS, node-group, service accounts, ECR push/pull permissions
 
-6.ECR repository module – Creates an ECR repo to host Docker images
+6. ECR repository module – Creates an ECR repo to host Docker images
 
-7.ALB/LoadBalancer module – Creates ALB (if using AWS LoadBalancer Controller) or ensures Service type=LoadBalancer for your app
+7. ALB/LoadBalancer module – Creates ALB (if using AWS LoadBalancer Controller) or ensures Service type=LoadBalancer for your app
 
-8.Outputs
+8. Outputs
 
 Useful information exposed:
 Cluster endpoint
@@ -124,13 +125,13 @@ ECR repo URL
 
 **Deploy your application - K8s Configuration**
 
-1.Verify helm installation in your local
+1. Verify helm installation in your local
 
-2.Inside your tech-challenge directory, run:
+2. Inside your tech-challenge directory, run:
 
-3.helm create helm-chart
+3. helm create helm-chart
 
-4.This will generate a folder structure like: helm creates default files 
+4. This will generate a folder structure like: helm creates default files 
 
 helm-chart/
 ├── Chart.yaml
@@ -140,61 +141,61 @@ helm-chart/
     ├── service.yaml
     ├── hpa.yaml
     
-5.Configure deployment yaml, service.yaml and values.yaml file to define which docker image to run, desired state, your ECR details etc.,
+5. Configure deployment yaml, service.yaml and values.yaml file to define which docker image to run, desired state, your ECR details etc.,
 
-6.Deploy your application using helm install flask-app ./helm-chart
+6. Deploy your application using helm install flask-app ./helm-chart
 
-7.Check Deployment & Pods - Kubectl get svc - This confirms your AWS Load Balancer is working and publicly exposing your Flask app
+7. Check Deployment & Pods - Kubectl get svc - This confirms your AWS Load Balancer is working and publicly exposing your Flask app
 
-8.Open your browser and hit ALB DNS to access your application
+8. Open your browser and hit ALB DNS to access your application
 
 
 **CI/CD Workflow**
 🔵 **CI: GitHub Actions (main branch)**
 
-1.Whenever you push/merge to main, GitHub Actions:
+1. Whenever you push/merge to main, GitHub Actions:
 
-2.Checks out the app code
+2. Checks out the app code
 
-3.Builds Docker image
+3. Builds Docker image
 
-4.Logs into AWS ECR
+4. Logs into AWS ECR
 
-5.Pushes image to ECR using a unique tag 
+5. Pushes image to ECR using a unique tag 
 
-6.Switches to gitops branch
+6. Switches to gitops branch
 
-7.Updates values.yaml with the new image tag
+7. Updates values.yaml with the new image tag
 
-8.Commits & pushes the update
+8. Commits & pushes the update
 
-9.This automatically triggers Argo CD → Cluster deployment
+9. This automatically triggers Argo CD → Cluster deployment
 
 **Argo CD Sync Process**
 
-1.GitHub Actions updates image tag in gitops/helm/values.yaml
+1. GitHub Actions updates image tag in gitops/helm/values.yaml
 
-2.Argo CD detects commit in the gitops branch
+2. Argo CD detects commit in the gitops branch
 
-3.Argo CD pulls Helm chart
+3. Argo CD pulls Helm chart
 
-4.Argo CD renders templates
+4. Argo CD renders templates
 
-5.Argo CD applies Deployment/Service/HPA to EKS
+5. Argo CD applies Deployment/Service/HPA to EKS
 
-6.Kubernetes pulls new ECR image
+6. Kubernetes pulls new ECR image
 
-7.Rolling update takes place
+7. Rolling update takes place
 
 **This provides a modern GitOps approach using github actions and CI/CD** 
 Why this model is effective
 
-1.Decouples image build (CI) from deployment orchestration (CD).
+1. Decouples image build (CI) from deployment orchestration (CD).
 
-2.Ensures that the cluster state is always declared in Git: whatever is in Git is what should be on the cluster.
+2. Ensures that the cluster state is always declared in Git: whatever is in Git is what should be on the cluster.
 
-3.Argo CD ensures drift is detected and managed.
+3. Argo CD ensures drift is detected and managed.
 
-4.You have traceability: commit → image tag → Git update → manifest change → Argo CD deploy.
+4. You have traceability: commit → image tag → Git update → manifest change → Argo CD deploy.
 
-5.Version control of both application code and infra code (via Terraform) plus manifests keeps everything auditable.
+5. Version control of both application code and infra code (via Terraform) plus manifests keeps everything auditable.
