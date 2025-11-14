@@ -43,13 +43,13 @@ Deploy the Dockerized app to EKS.
 
 5. **CI/CD with GitOps (Automation Layer)**
 we are using a modern GitOps flow:
+
 **CI (Continuous Integration) — GitHub Actions**
 When code is pushed to the gitops branch:
 Build Docker image from Dockerfile.
 Tag it (e.g., v1.0, latest).
 Push image to AWS ECR.
 Update HELM values or manifest image tag automatically.
-
 **CD (Continuous Deployment) — Argo CD**
 Argo CD watches your GitOps repo (manifests/HELM charts).
 When it detects a change (e.g., new image tag in HELM values.yaml),
@@ -78,6 +78,7 @@ Argo CD continuously syncs this branch to the Kubernetes cluster.
 GitHub Actions updates image tags here
 
 **Setting Up the Environment**
+
 1. **Clone the repository**
 git clone https://github.com/ureachbhargavi/tech-challenge2.git
 
@@ -99,6 +100,7 @@ Access your application using your host machine IP Address:Application port
 
 **Terraform Infrastructure**
 Terraform provisions your full AWS infrastructure:
+
 1.VPC module – Creates VPC, subnets (public/private), route tables, NAT gateways etc
 
 2.EKS module – Provisions EKS control plane, worker node group(s)
@@ -121,6 +123,7 @@ Kubeconfig
 ECR repo URL
 
 **Deploy your application - K8s Configuration**
+
 1.Verify helm installation in your local
 
 2.Inside your tech-challenge directory, run:
@@ -148,6 +151,7 @@ helm-chart/
 
 **CI/CD Workflow**
 🔵 **CI: GitHub Actions (main branch)**
+
 1.Whenever you push/merge to main, GitHub Actions:
 
 2.Checks out the app code
@@ -167,6 +171,7 @@ helm-chart/
 9.This automatically triggers Argo CD → Cluster deployment
 
 **Argo CD Sync Process**
+
 1.GitHub Actions updates image tag in gitops/helm/values.yaml
 
 2.Argo CD detects commit in the gitops branch
@@ -180,3 +185,16 @@ helm-chart/
 6.Kubernetes pulls new ECR image
 
 7.Rolling update takes place
+
+**This provides a modern GitOps approach using github actions and CI/CD** 
+Why this model is effective
+
+1.Decouples image build (CI) from deployment orchestration (CD).
+
+2.Ensures that the cluster state is always declared in Git: whatever is in Git is what should be on the cluster.
+
+3.Argo CD ensures drift is detected and managed.
+
+4.You have traceability: commit → image tag → Git update → manifest change → Argo CD deploy.
+
+5.Version control of both application code and infra code (via Terraform) plus manifests keeps everything auditable.
