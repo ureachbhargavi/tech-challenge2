@@ -84,7 +84,7 @@ git checkout gitops
 4. **Test Docker build locally**
 docker build -t hello-app:latest .
 docker run -p 8080:8080 hello-app:latest
-Visit: http://localhost:8080
+Access your application using your host machine IP Address:Application port
 
 
 **Terraform Infrastructure**
