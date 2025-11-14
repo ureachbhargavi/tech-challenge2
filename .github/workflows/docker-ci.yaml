@@ -9,7 +9,6 @@ env:
   ECR_REPOSITORY: flask-hello-world
   GITOPS_BRANCH: gitops
   HELM_PATH: helm-chart
-  IMAGE_TAG=$(date +%Y%m%d%H%M%S)
 
 jobs:
   build-and-deploy:
