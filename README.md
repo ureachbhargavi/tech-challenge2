@@ -81,7 +81,7 @@ GitHub Actions updates image tags here
 1. **Clone the repository**
 git clone https://github.com/ureachbhargavi/tech-challenge2.git
 
-2.cd tech-challenge2
+2.**cd tech-challenge2**
 
 3. **Check out the correct branch**
 For infrastructure, app code:
@@ -121,13 +121,13 @@ Kubeconfig
 ECR repo URL
 
 **Deploy your application - K8s Configuration**
-Verify helm installation in your local
+1.Verify helm installation in your local
 
-Inside your tech-challenge directory, run:
+2.Inside your tech-challenge directory, run:
 
-helm create helm-chart
+3.helm create helm-chart
 
-This will generate a folder structure like: helm creates default files 
+4.This will generate a folder structure like: helm creates default files 
 
 helm-chart/
 ├── Chart.yaml
@@ -137,46 +137,46 @@ helm-chart/
     ├── service.yaml
     ├── hpa.yaml
     
-Configure deployment yaml, service.yaml and values.yaml file to define which docker image to run, desired state, your ECR details etc.,
+5.Configure deployment yaml, service.yaml and values.yaml file to define which docker image to run, desired state, your ECR details etc.,
 
-Deploy your application using helm install flask-app ./helm-chart
+6.Deploy your application using helm install flask-app ./helm-chart
 
-Check Deployment & Pods - Kubectl get svc - This confirms your AWS Load Balancer is working and publicly exposing your Flask app
+7.Check Deployment & Pods - Kubectl get svc - This confirms your AWS Load Balancer is working and publicly exposing your Flask app
 
-Open your browser and hit ALB DNS to access your application
+8.Open your browser and hit ALB DNS to access your application
 
 
 **CI/CD Workflow**
 🔵 **CI: GitHub Actions (main branch)**
-Whenever you push/merge to main, GitHub Actions:
+1.Whenever you push/merge to main, GitHub Actions:
 
-Checks out the app code
+2.Checks out the app code
 
-Builds Docker image
+3.Builds Docker image
 
-Logs into AWS ECR
+4.Logs into AWS ECR
 
-Pushes image to ECR using a unique tag 
+5.Pushes image to ECR using a unique tag 
 
-Switches to gitops branch
+6.Switches to gitops branch
 
-Updates values.yaml with the new image tag
+7.Updates values.yaml with the new image tag
 
-Commits & pushes the update
+8.Commits & pushes the update
 
-This automatically triggers Argo CD → Cluster deployment
+9.This automatically triggers Argo CD → Cluster deployment
 
 **Argo CD Sync Process**
-GitHub Actions updates image tag in gitops/helm/values.yaml
+1.GitHub Actions updates image tag in gitops/helm/values.yaml
 
-Argo CD detects commit in the gitops branch
+2.Argo CD detects commit in the gitops branch
 
-Argo CD pulls Helm chart
+3.Argo CD pulls Helm chart
 
-Argo CD renders templates
+4.Argo CD renders templates
 
-Argo CD applies Deployment/Service/HPA to EKS
+5.Argo CD applies Deployment/Service/HPA to EKS
 
-Kubernetes pulls new ECR image
+6.Kubernetes pulls new ECR image
 
-Rolling update takes place
+7.Rolling update takes place
