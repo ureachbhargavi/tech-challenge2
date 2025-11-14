@@ -54,7 +54,7 @@ jobs:
           git checkout ${{ env.GITOPS_BRANCH }}
 
           sed -i "s|repository: .*|repository: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}|" ${{ env.HELM_PATH }}/values.yaml
-          sed -i "s|tag: .*|tag: ${{ env.IMAGE_TAG }}|" ${{ env.HELM_PATH }}/values.yaml
+          sed -i "s|tag: .*|tag: \"${{ env.IMAGE_TAG }}\"|g" ${{ env.HELM_PATH }}/values.yaml
 
           git add ${{ env.HELM_PATH }}/values.yaml
           git commit -m "Update image tag to $(date +%Y%m%d%H%M%S)"
